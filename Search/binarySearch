@@ -1,0 +1,114 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+/*
+    ------------------------------------------------------------
+    Function: binarySearch
+    Purpose : Search for a specific value in a sorted array.
+    Input   : 
+        v → Sorted vector of numbers.
+        targetValue → The number to search.
+    Output  : 
+        Index of targetValue if found; otherwise -1.
+    Complexity : O(log n)
+    ------------------------------------------------------------
+*/
+ll binarySearch(const vector<ll> &v, ll targetValue) {
+    ll lo = 0, hi = (ll)v.size() - 1;
+
+    while (lo <= hi) {
+        ll mid = lo + (hi - lo) / 2; // Prevent overflow
+        if (v[mid] == targetValue)
+            return mid;               // Found the target
+        if (v[mid] < targetValue)
+            lo = mid + 1;             // Search right half
+        else
+            hi = mid - 1;             // Search left half
+    }
+
+    return -1; // Target not found
+}
+
+/*
+    ------------------------------------------------------------
+    Function: lowerBoundIdx
+    Purpose : Find the first index i such that v[i] >= targetValue.
+    Input   :
+        v → Sorted vector of numbers.
+        targetValue → The number to find the lower bound for.
+    Output  :
+        Index of the first element >= targetValue; 
+        returns -1 if no such element exists.
+    Complexity : O(log n)
+    ------------------------------------------------------------
+*/
+ll lowerBoundIdx(const vector<ll> &v, ll targetValue) {
+    ll lo = 0, hi = (ll)v.size() - 1, ans = -1;
+
+    while (lo <= hi) {
+        ll mid = lo + (hi - lo) / 2;
+
+        if (v[mid] >= targetValue) {
+            ans = mid;    // Possible answer, move left for earlier one
+            hi = mid - 1;
+        } else {
+            lo = mid + 1; // Move right since mid < target
+        }
+    }
+
+    return ans;
+}
+
+/*
+    ------------------------------------------------------------
+    Function: solve
+    Purpose : Handles input/output and demonstrates both functions.
+    ------------------------------------------------------------
+*/
+void solve() {
+    ll n; 
+    if (!(cin >> n)) return;  // Handle empty input safely
+
+    vector<ll> v(n);
+    for (auto &it : v) cin >> it;
+
+    ll targetValue; 
+    cin >> targetValue;
+
+    // Sort once before binary searching
+    sort(v.begin(), v.end());
+
+    cout << "binarySearch(sorted) = " 
+         << binarySearch(v, targetValue) << '\n';
+
+    cout << "lowerBoundIdx(sorted) = " 
+         << lowerBoundIdx(v, targetValue) << '\n';
+
+    // Using STL built-in functions (for reference)
+    auto it = lower_bound(v.begin(), v.end(), targetValue);
+    if (it != v.end()) 
+        cout << "std::lower_bound index = " << (it - v.begin()) << '\n';
+    else 
+        cout << "std::lower_bound index = -1\n";
+
+    bool exists = binary_search(v.begin(), v.end(), targetValue);
+    cout << "std::binary_search exists? " 
+         << (exists ? "yes" : "no") << '\n';
+}
+
+/*
+    ------------------------------------------------------------
+    Main Function
+    ------------------------------------------------------------
+*/
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t = 1; 
+    // cin >> t; // Uncomment for multiple test cases
+    while (t--) solve();
+
+    return 0;
+}
